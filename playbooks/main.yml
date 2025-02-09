@@ -1,0 +1,51 @@
+---
+- name: Deploy React App
+  hosts: all
+  become: yes  # You may need root privileges
+  vars:
+    artifact_url: "{{ artifact_url }}"  # URL passed from Jenkins (Dev/Prod build)
+    app_dir: /var/www/my-react-app  # Directory to deploy the app
+    nginx_conf: /etc/nginx/sites-available/react-app  # Path to Nginx config (if needed)
+
+  tasks:
+    # Step 1: Install Nginx (if not installed)
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "Debian"
+
+    # Step 2: Download the React app build from the Jenkins artifact URL
+    - name: Download React app build
+      get_url:
+        url: "{{ artifact_url }}"
+        dest: "{{ app_dir }}/build.zip"  # Store the build as a zip file (for example)
+
+    # Step 3: Unzip the build
+    - name: Unzip React build
+      unarchive:
+        src: "{{ app_dir }}/build.zip"
+        dest: "{{ app_dir }}/"
+        remote_src: yes
+
+    # Step 4: Set up Nginx (optional, if serving the app through Nginx)
+    - name: Set up Nginx to serve React app
+      template:
+        src: "nginx-react-app.j2"
+        dest: "{{ nginx_conf }}"
+      notify:
+        - Restart Nginx
+
+    # Step 5: Restart Nginx service
+    - name: Restart Nginx service
+      service:
+        name: nginx
+        state: restarted
+      when: ansible_hostname == "prod-server"  # Restart only on Prod server
+
+    # Step 6: Clean up old build artifacts (optional)
+    - name: Remove old build files
+      file:
+        path: "{{ app_dir }}/old_build/"
+        state: absent
+      when: ansible_hostname == "prod-server"
