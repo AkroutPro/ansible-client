@@ -34,7 +34,11 @@
         src: "{{ app_dir }}/build.zip"
         dest: "{{ app_dir }}/"
         remote_src: yes
-
+    - name: Create the /etc/nginx/sites-available/react-app  directory
+      file:
+        path: "/etc/nginx/sites-available/react-app"
+        state: directory
+        mode: '0755'
     # Step 4: Set up Nginx (optional, if serving the app through Nginx)
     - name: Set up Nginx to serve React app
       template:
