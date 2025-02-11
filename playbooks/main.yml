@@ -14,15 +14,13 @@
         name: nginx
         state: present
       when: ansible_os_family == "Debian"
-
     # Step 2: Download the React app build from the Jenkins artifact URL
     - name: Download React app build
-      uri:
-        method: GET
+      get_url:
         url: "{{ artifact_url }}"
         dest: "{{ app_dir }}/build.zip"  # Store the build as a zip file (for example)
-        user: "{{jenkins_user}}"
-        password: "{{jenkins_token}}"
+        headers:
+          Authorization: "Basic {{ (jenkins_user + ':' + jenkins_token) | b64encode }}"
 
     # Step 3: Unzip the build
     - name: Unzip React build
