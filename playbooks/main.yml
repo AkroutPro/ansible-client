@@ -48,7 +48,8 @@
         - Restart Nginx
 
     # Step 5: Restart Nginx service
-    - name: Restart Nginx service
+  handlers:
+    - name: Restart Nginx
       service:
         name: nginx
         state: restarted
