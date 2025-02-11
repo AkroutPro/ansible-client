@@ -14,6 +14,12 @@
         name: nginx
         state: present
       when: ansible_os_family == "Debian"
+
+    - name: Create the /var/www/my-react-app directory
+      file:
+        path: "/var/www/my-react-app"
+        state: directory
+        mode: '0755'
     # Step 2: Download the React app build from the Jenkins artifact URL
     - name: Download React app build
       get_url:

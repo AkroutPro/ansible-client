@@ -1,0 +1,20 @@
+server {
+    listen 80;
+    server 172.18.0.3;
+
+    location / {
+        root /var/www/my-react-app/build;
+        try_files $uri /index.html;
+    }
+
+    # Optional: Configure gzip for better performance
+    gzip on;
+    gzip_types text/css application/javascript text/javascript;
+    gzip_min_length 1000;
+
+    # Optional: Handle cache headers for assets
+    location ~* \.(?:css|js|json|woff2?|eot|ttf|svg|otf)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
