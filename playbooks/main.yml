@@ -17,7 +17,8 @@
 
     # Step 2: Download the React app build from the Jenkins artifact URL
     - name: Download React app build
-      get_url:
+      uri:
+        method: GET
         url: "{{ artifact_url }}"
         dest: "{{ app_dir }}/build.zip"  # Store the build as a zip file (for example)
         user: "{{jenkins_user}}"
