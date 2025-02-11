@@ -5,7 +5,7 @@
   vars:
     artifact_url: "{{ artifact_url }}"  # URL passed from Jenkins (Dev/Prod build)
     app_dir: /var/www/my-react-app  # Directory to deploy the app
-    nginx_conf: /etc/nginx/sites-available/react-app  # Path to Nginx config (if needed)
+    nginx_conf: /etc/nginx/sites-available/default  # Default Nginx config
 
   tasks:
     # Step 1: Install Nginx (if not installed)
