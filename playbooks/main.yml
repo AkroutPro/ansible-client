@@ -39,13 +39,27 @@
         path: "/etc/nginx/sites-available/react-app"
         state: directory
         mode: '0755'
-    # Step 4: Set up Nginx (optional, if serving the app through Nginx)
-    - name: Set up Nginx to serve React app
-      template:
-        src: "nginx-react-app.j2"
-        dest: "{{ nginx_conf }}"
-      notify:
-        - Restart Nginx
+ # Step 4: Update the default location in Nginx config
+    - name: Update Nginx config to serve React app
+      lineinfile:
+        path: "{{ nginx_conf }}"
+        regexp: '^\s*location / {'
+        line: '    location / {'
+        state: present
+
+    - name: Ensure React build path is set correctly in the config
+      lineinfile:
+        path: "{{ nginx_conf }}"
+        regexp: '^\s*root /var/www/my-react-app/build;'
+        line: '        root /var/www/my-react-app/build;'
+        state: present
+
+    - name: Ensure try_files directive is correct
+      lineinfile:
+        path: "{{ nginx_conf }}"
+        regexp: '^\s*try_files \$uri /index.html;'
+        line: '        try_files $uri /index.html;'
+        state: present
 
     # Step 5: Restart Nginx service
   handlers:
